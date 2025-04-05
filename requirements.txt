@@ -1,3 +1,8 @@
-discord.py
+discord
+random
+os
+json
 openpyxl
+signal
+asyncio
 pandas
