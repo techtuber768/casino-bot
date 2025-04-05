@@ -344,5 +344,9 @@ async def on_ready():
     
     bot.loop.create_task(auto_save_data())  # Start auto-save task
 
-
-bot.run(BOT_KEY)
+#Run the bot
+if __name__ == "__main__":
+    try:
+        asyncio.run(bot.start(BOT_KEY))
+    except KeyboardInterrupt:
+        print("Bot stopped manually.")
