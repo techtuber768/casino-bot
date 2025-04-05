@@ -123,8 +123,8 @@ async def roll_dice(interaction: discord.Interaction, bet: int):
     bot_roll = random.randint(1, 6)
     
     if user_roll == bot_roll:
-        winnings = bet * 3
-        update_balance(interaction.user.id, winnings)
+        winnings = bet * 2
+        update_balance(interaction.user.id, winnings-bet)  # Net gain
         log_transaction(interaction.user.id, f"Rolled {user_roll}, Bot rolled {bot_roll}. Won ${winnings}")
         result = f"🎉 You rolled a {user_roll}, and the bot rolled a {bot_roll}. You win **${winnings}**!"
     else:
@@ -157,7 +157,7 @@ async def coinflip(interaction: discord.Interaction, bet: int, choice: str):
     
     if result == choice.lower():
         winnings = bet * 2
-        update_balance(user_id, winnings)
+        update_balance(user_id, winnings-bet)  # Net gain
         log_transaction(user_id, f"Bet on {choice}, landed {result}. Won ${winnings}")
         embed.add_field(name="🎉 You Win!", value=f"You won **${winnings}**!", inline=False)
     else:
@@ -224,7 +224,7 @@ class BlackjackView(discord.ui.View):
             result = "🎉 You win!" if winner == "player" else "😢 You lose." if winner == "bot" else "🤝 It's a tie!"
             if winner == "player":
                 winnings = game.bet * 2
-                update_balance(user_id, winnings)
+                update_balance(user_id, winnings-game.bet)  # Net gain
                 log_transaction(user_id, f"Blackjack win: +${winnings}")
             else:
                 log_transaction(user_id, f"Blackjack loss: -${game.bet}")
@@ -253,7 +253,7 @@ class BlackjackView(discord.ui.View):
         result = "🎉 You win!" if winner == "player" else "😢 You lose." if winner == "bot" else "🤝 It's a tie!"
         if winner == "player":
             winnings = game.bet * 2
-            update_balance(user_id, winnings)
+            update_balance(user_id, winnings-game.bet)  # Net gain
             log_transaction(user_id, f"Blackjack win: +${winnings}")
         else:
             log_transaction(user_id, f"Blackjack loss: -${game.bet}")
@@ -344,9 +344,5 @@ async def on_ready():
     
     bot.loop.create_task(auto_save_data())  # Start auto-save task
 
-#Run the bot
-if __name__ == "__main__":
-    try:
-        asyncio.run(bot.start(BOT_KEY))
-    except KeyboardInterrupt:
-        print("Bot stopped manually.")
+
+bot.run(BOT_KEY)
